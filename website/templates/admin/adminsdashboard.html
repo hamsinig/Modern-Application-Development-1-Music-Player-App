@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Pacifico|Roboto:400,700&display=swap">
+
+    <style>
+        
+        .custom-navbar {
+    background-color: #0a0d67; 
+  }
+        /* Add styles for the card layout */
+        .fancy-font {
+                font-family: 'Pacifico', cursive; 
+               
+                /* Increased font size for Musique */
+                color: #c2baba;
+                /* Set the text color to black */
+                margin-bottom: 20px;
+                /* Slightly push it to the top */
+                position: absolute;
+                top: 50%;
+                /* Position the top of the element at the vertical center of the container */
+                left: 4%;
+                /* Position the left of the element at the horizontal center of the container */
+                transform: translate(-50%, -50%);
+    
+            }
+    .navbar-brand {
+        font-family: 'Pacifico',cursive !important;
+        /* Apply Pacifico font */
+    }
+        .card-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card-container {
+            background: linear-gradient(to bottom, rgb(160, 113, 235), rgb(46, 8, 117));
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            background-color: rgb(229, 215, 244);
+            
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+         
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card-body {
+            text-align: center;
+        }
+       
+    </style>
+
+    <title>Admin Dashboard</title>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand fancy-font" href="#">
+                Musique
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Left-aligned buttons with custom styling -->
+                <ul class="navbar-nav" style="margin-left: 150px;">
+                    <li class="nav-item" style="margin-right: 20px;">
+                        <a class="nav-link btn btn-outline-primary" href="{{ url_for('auth.index') }}">Admin's dashboard</a>
+                    </li>
+                    <li class="nav-item" style="margin-right: 20px;">
+                        <a class="nav-link btn btn-outline-primary" href="{{ url_for('auth.user_table') }}">User</a>
+                    </li>
+                    <li class="nav-item" style="margin-right: 20px;">
+                        <a class="nav-link btn btn-outline-primary" href="{{ url_for('auth.song_table') }}">Song</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-primary" href="{{ url_for('auth.album_table') }}">Album</a>
+                    </li>
+                </ul>
+                
+                <!-- Right-aligned button -->
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-primary" href="{{ url_for('auth.logout')}}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content Section -->
+    <div class="container mt-4">
+
+        <!-- Fancy Card Layout for Statistics -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-8">
+                <div class="card-container">
+                    <h5 class="card-title">Statistics</h5>
+                    <div class="card-body">
+
+                        <!-- Total Users Card -->
+                        <div class="row mb-4">
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Users</h5>
+                                        <p class="card-text">{{ total_users }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Creators Count Card -->
+                        <div class="row mb-4">
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Creators Count</h5>
+                                        <p class="card-text">{{ creators_count }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Users Count Card -->
+                        <div class="row mb-4">
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Users Count</h5>
+                                        <p class="card-text">{{ users_count }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Songs Count Card -->
+                        <div class="row mb-4">
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Songs Count</h5>
+                                        <p class="card-text">{{ songs_count }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Unique Genres Card -->
+                        <div class="row mb-4">
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Unique Genres</h5>
+                                        <p class="card-text">{{ unique_genres }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Number of Albums Card -->
+                        <div class="row mb-4">
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Number of albums</h5>
+                                        <p class="card-text">{{ albums_count }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

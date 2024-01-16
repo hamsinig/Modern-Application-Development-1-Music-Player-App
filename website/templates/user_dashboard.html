@@ -1,0 +1,380 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Pacifico|Roboto:400,700&display=swap">
+   
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+
+    
+    <style>
+       
+       
+        .custom-navbar {
+    background-color: #0a0d67;
+  }
+
+        .add-album-btn {
+            position: absolute;
+            top: 50px;
+            left: 1322px;
+        }
+
+        .view-album-btn {
+            position: absolute;
+            top: 50px;
+            left: 1172px;
+        }
+
+        .navbar-brand {
+            font-family: 'Pacifico', cursive !important;
+            /* Apply Pacifico font */
+        }
+        h2 {
+            text-align: center;
+        }
+    </style>
+
+    <title>Creator Dashboard</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand">Musique</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-primary" href="{{ url_for('auth.explore') }}"><b>Explore</b></a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto"> <!-- Use ms-auto to push items to the right -->
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-primary" href="{{ url_for('auth.user_dashboard') }}"><b>User's Dashboard</b></a>
+                    </li>
+                    <a class="btn btn-outline-success me-0" href="{{ url_for('auth.search') }}"> <!-- Use me-0 to remove the margin -->
+                        <i class="bi bi-search"></i>
+                    </a>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-primary" href="{{ url_for('auth.welcome') }}"><b>Logout</b></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+            
+        
+        
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            {% if category == 'success2' %}
+                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% elif category == 'error2' %}
+                <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endwith %}
+
+    
+        <!-- Display User Details -->
+        <div class="row justify-content-center" style="margin-top: 70px;margin-bottom: 70 px;">
+            <h2>User's Dashboard</h2>
+            <table class="table table-hover table-bordered table-sm" style="width: 50%;">
+              <thead>
+                <tr>
+                  <th scope="col">S No</th>
+                  <th scope="col">Parameters</th>
+                  <th scope="col">Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">1</th>
+                  <td><strong>Name:</strong></td>
+                  <td>{{ current_user.name }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">2</th>
+                  <td><strong>Username:</strong></td>
+                  <td>{{ current_user.username }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">3</th>
+                  <td><strong>Email:</strong></td>
+                  <td>{{ current_user.email }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">4</th>
+                  <td><strong>Location:</strong></td>
+                  <td>{{ current_user.location }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+    
+
+    <!-- Button trigger modal for Edit Details -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editDetailsModal" style="width: 50%; padding: 0.25rem 0.5rem; display: block; margin: 0 auto; margin-bottom: 15px;">Edit Details</button>
+
+
+    <!-- Button trigger modal for Register As Creator -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerAsCreatorModal" style="width: 50%; padding: 0.25rem 0.5rem; display: block; margin: 0 auto;margin-bottom: 15px;">Register As Creator</button>
+
+    <!-- Button trigger modal for Login As Creator -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginAsCreatorModal" style="width: 50%; padding: 0.25rem 0.5rem; display: block; margin: 0 auto;">Login As Creator</button>
+
+    <!-- First Modal: Edit Details -->
+   
+        <div class="modal fade" id="editDetailsModal" tabindex="-1" role="dialog" aria-labelledby="editDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editDetailsModalLabel">Edit Details</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                
+                    <form id="updateDetailsForm" method="POST" action="{{ url_for('auth.update_details') }}">
+                        <div class="modal-body">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ current_user.name }}" required>
+        
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" value="{{ current_user.username }}" required>
+        
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ current_user.email }}" required>
+        
+                            <label for="location">Location</label>
+                            <input type="text" class="form-control" id="location" name="location" value="{{ current_user.location }}" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    
+
+    <!-- Second Modal: Register As Creator -->
+   
+        <div class="modal fade" id="registerAsCreatorModal" tabindex="-1" role="dialog" aria-labelledby="registerAsCreatorModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="registerAsCreatorModalLabel">Register As Creator</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                
+                    <form id="registerAsCreatorForm" method="POST" action="{{ url_for('auth.register_as_creator') }}">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="creatorUsername">Username</label>
+                                <input type="text" class="form-control" id="creatorUsername" name="username" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="creatorPassword">Password</label>
+                                <input type="password" class="form-control" id="creatorPassword" name="password" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+    
+
+    <!-- Third Modal: Login As Creator -->
+    <div class="modal fade" id="loginAsCreatorModal" tabindex="-1" role="dialog" aria-labelledby="loginAsCreatorModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginAsCreatorModalLabel">Login As Creator</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            
+                <form id="loginAsCreatorForm" method="POST" action="{{ url_for('auth.creator_login') }}">
+
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="creatorUsername">Username</label>
+                            <input type="text" class="form-control" id="creatorUsername" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="creatorPassword">Password</label>
+                            <input type="password" class="form-control" id="creatorPassword" name="password" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Log In</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    
+    
+    </div>
+    <div class="container">
+        <h2 class="text-center" style="margin-top: 50px;">My Playlists</h2>
+        {% if playlists_with_songs %}
+        {% for playlist in playlists_with_songs %}
+            <div class="card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title">{{ playlist.name }}</h5>
+                    
+                        <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletePlaylistModal{{ playlist.id }}">
+                            Delete
+                        </button>
+                    
+                    
+                </div>
+                
+                <div class="modal fade" id="deletePlaylistModal{{ playlist.id }}" tabindex="-1" role="dialog" aria-labelledby="deletePlaylistModalLabel{{ playlist.id }}" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deletePlaylistModalLabel{{ playlist.id }}">Delete Playlist</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete the playlist "{{ playlist.name }}"?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <form method="POST" action="{{ url_for('auth.delete_playlist', playlist_id=playlist.id) }}">
+                                    <!-- Other form fields, if any -->
+                                    <button type="submit" class="btn btn-danger">
+                                        Delete
+                                    </button>
+                                </form>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    
+                    <div class="row">
+                        
+                        {% for song in playlist.songs %}
+                        {% if song.flag=='green' %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ song.Song_name }}</h5>
+                                        <p class="card-text">Artist: {{ song.Song_Artist }}</p>
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#songModal{{ song.Songid }}">
+                                            Play Song
+                                        </button>
+                                        
+                                        <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#removeSongModal{{ song.Songid }}">
+                                            Remove
+                                        </button>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="removeSongModal{{ song.Songid }}" tabindex="-1" role="dialog" aria-labelledby="removeSongModalLabel{{ song.Songid }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="removeSongModalLabel{{ song.Songid }}">Remove Song</h5>
+                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to remove "{{ song.Song_name }}" from the playlist?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <form method="POST" action="{{ url_for('auth.remove_song', song_id=song.Songid, playlist_id=playlist.id) }}">
+                                                <!-- Other form fields, if any -->
+                                                <button type="submit" class="btn btn-danger">
+                                                    Remove
+                                                </button>
+                                            </form>
+                                           
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Modal for each song -->
+                            <div class="modal fade" id="songModal{{ song.Songid }}" tabindex="-1" role="dialog" aria-labelledby="songModalLabel{{ song.Songid }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="songModalLabel{{ song.Songid }}">{{ song.Song_name }}</h5>
+                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>{{ song.Song_Lyrics }}</p>
+                                            <audio controls>
+                                                <source src="static/music.mp3" type="audio/mp3">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        {% else %}
+        <h3 class="text-center" style="margin-top: 50px;">You have no songs in your playlsits yet!</h3>
+        {% endif %}
+    </div>
+    
+
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyDY5zOqBSHFN8/9tMJB8E+XT9GXunAOOd8Oys=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</body>
+
+</html>

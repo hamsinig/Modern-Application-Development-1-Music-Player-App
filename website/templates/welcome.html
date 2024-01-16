@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa; /* Set a background color for the entire page */
+        }
+
+        .transparent-box {
+            width: 500px;
+            height: 400px;
+            background: rgba(192, 199, 220, 0.8); /* Use rgba to set opacity */
+            border: 1px solid #576389;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column; /* Align buttons vertically */
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Use Bootstrap button styles with inline styles for width */
+        .btn {
+            width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="transparent-box">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <h2>Welcome to Musique</h2>
+        <div class="button-container">
+            <!-- Use Bootstrap buttons with custom styles -->
+            <a href="{{ url_for('auth.login') }}" class="btn btn-primary" style="background-color: #28a745; border-color: #28a745;">
+                Log In
+            </a>
+            <a href="{{ url_for('auth.signup') }}" class="btn btn-success" style="background-color: #007bff; border-color: #007bff;">
+                Sign Up
+            </a>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#adminLoginModal" style="background-color: #dc3545; border-color: #dc3545;">
+                Admin Login
+            </button>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal fade" id="adminLoginModal" tabindex="-1" role="dialog" aria-labelledby="adminLoginModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="adminLoginModalLabel">Admin Login</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Admin Login Form -->
+                    <form method="post" action="{{ url_for('auth.admin_login') }}">
+                        <div class="form-group">
+                            <label for="adminUsername">Admin Username:</label>
+                            <input type="text" class="form-control" id="adminUsername" name="adminUsername" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminPassword">Admin Password:</label>
+                            <input type="password" class="form-control" id="adminPassword" name="adminPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Bootstrap JS (Optional) -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+
+</html>

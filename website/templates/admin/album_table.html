@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Pacifico|Roboto:400,700&display=swap">
+
+    
+    <style>
+        
+        .custom-navbar {
+    background-color: #0a0d67; 
+  }
+        /* Add styles for the card layout */
+        .fancy-font {
+                font-family: 'Pacifico', cursive; /* Use custom font for "Musique" */
+               
+               
+                color: #c2baba;
+               
+                margin-bottom: 20px;
+               
+                position: absolute;
+                top: 50%;
+                
+                left: 4%;
+                
+                transform: translate(-50%, -50%);
+    
+            }
+    .navbar-brand {
+        font-family: 'Pacifico',cursive !important;
+        /* Apply Pacifico font */
+    }
+    .page-title {
+            text-align: center;
+            margin-top: 20px; 
+           
+        }
+        .card-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card-body {
+            text-align: center;
+        }
+    </style>
+
+    <title>Admin Dashboard</title>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand fancy-font" href="#">
+                Musique
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Left-aligned buttons with custom styling -->
+                <ul class="navbar-nav" style="margin-left: 150px;">
+                    <li class="nav-item" style="margin-right: 20px;">
+                        <a class="nav-link btn btn-outline-primary" href="{{ url_for('auth.index') }}">Admin's dashboard</a>
+                    </li>
+                    <li class="nav-item" style="margin-right: 20px;">
+                        <a class="nav-link btn btn-outline-primary" href="{{ url_for('auth.user_table') }}">User</a>
+                    </li>
+                    <li class="nav-item" style="margin-right: 20px;">
+                        <a class="nav-link btn btn-outline-primary" href="{{ url_for('auth.song_table') }}">Song</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-primary" href="{{ url_for('auth.album_table') }}">Album</a>
+                    </li>
+                </ul>
+                
+                <!-- Right-aligned button -->
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-primary" href="{{ url_for('auth.welcome')}}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <h1 class="page-title">Album Table</h1>
+    <div style="margin-top: 150px;"></div>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <table class="table table-bordered">
+                <caption>List of Albums</caption>
+                <thead>
+                <tr>
+                    <th scope="col">S.No</th>
+                    <th scope="col">Album title</th>
+                    <th scope="col">Album artist</th>
+                    <th scope="col">Songs</th>
+                    <th scope="col">Permission</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for album in albums %}
+                    <tr>
+                        <td>{{ album.album_id }}</td>
+                        <td>{{ album.album_title }}</td>
+                        <td>{{album.album_artist }}</td>
+                        <td>{{album.songs }}</td>
+                        
+                        <td>{{ album.flag }}</td>
+                        
+                        <td>
+                            <a href="{{ url_for('auth.change_album_permissions', album_id=album.album_id, flag=album.flag) }}" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#permissionModal{{ album.album_id }}">Change Permissions</a>
+
+                            <a href="{{ url_for('auth.delete_album', album_id=album.album_id) }}" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ album.album_id }}">Delete</a>
+                        </td>
+                    </tr>
+                    
+                    <div class="modal fade" id="deleteModal{{ album.album_id }}" tabindex="-1" role="dialog"
+                    aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form  method="POST" action="{{ url_for('auth.delete_album', album_id=album[0]) }}"> 
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete this song?</p>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Delete</button>
+                                
+                                
+                            </div>
+                            </form>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="permissionModal{{ album.album_id }}" tabindex="-1" role="dialog"
+                    aria-labelledby="permissionModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="permissionModalLabel">Confirm to change</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form  method="POST" action="{{ url_for('auth.change_album_permissions', album_id=album.album_id,flag=album.flag) }}"> 
+                            <div class="modal-body">
+                                <p>Are you sure you want to change the permissions of this song?</p>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Change</button>
+                                
+                                
+                            </div>
+                            </form>
+                            
+                        </div>
+                    </div>
+                </div>
+                    <!-- Edit Modal -->
+                    
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
